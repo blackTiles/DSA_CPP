@@ -24,3 +24,40 @@ int main(){
     cout<<endl;
     return 0;
 }
+
+void deleteNode(vector<int> &hT, int num) {
+    int size = hT.size();
+    int i;
+    for(i=0; i<size; i++) {
+        if(num==hT[i]) {
+            break;
+        }
+    }
+    swap(&hT[i], &hT[size-1]);
+    hT.pop_back();
+    for(int i=size/2-1; i>=0; i--) {
+        heapify(hT, i);
+    }
+}
+
+void printArray(vector<int> &hT) {
+    for(int i=0; i<hT.size(); i++) {
+        cout<<hT[i]<<" ";
+    }
+    cout<<endl;
+}
+
+int main(){
+    vector<int> heapTree;
+    insert(heapTree, 3);
+    insert(heapTree, 4);
+    insert(heapTree, 9);
+    insert(heapTree, 5);
+    insert(heapTree, 2);
+    cout<<"Max-Heap array: ";
+    printArray(heapTree);
+    deleteNode(heapTree, 4);
+    cout<<"After deleting an element: ";
+    printArray(heapTree);
+    return 0;
+}
