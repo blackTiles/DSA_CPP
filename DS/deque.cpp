@@ -1,142 +1,123 @@
 #include<iostream>
 using namespace std;
 
-#define MAX 10
-
-class Deque{
-    int arr[MAX];
-    int front;
-    int rear;
-    int size;
-
-    public:
-        Deque(int size){
-            front = -1;
-            rear = 0;
-            this->size = size;
-        }
-
-        void insertfront(int key);
-        void insertrear(int key);
-        void deletefront();
-        void deleterear();
-        bool isFull();
-        bool isEmpty();
-        int getFront();
-        int getRear();
+struct Node{
+    int data;
+    Node *prev;
+    Node *next;
+    Node(int value): data(value), prev(nullptr), next(nullptr){}
 };
 
-bool Deque::isFull(){
-    return ((front == 0 && rear == size-1) || front == rear+1);
-}
+class DQlinkedlist{
+    private:
+        Node *head;
+    public:
+        DQlinkedlist(): head(nullptr) {}
 
-bool Deque::isEmpty(){
-    return (front == -1);
-}
+        bool isEmpty(){
+            return head==nullptr; 
+        }
 
-void Deque::insertfront(int key){
-    if(isFull()){
-        cout << "Overflow\n";
-        return;
-    }
+        int size(){
+            int s=0;
+            Node *temp = head;
+            if(!isEmpty() && head->next==nullptr){
+                return 1;
+            }else{
+                s=1;
+                while(temp->next != nullptr){
+                    temp = temp->next;
+                    s++;
+                }
+            }
+            return s;
+        }
 
-    if(front == -1){
-        front = 0;
-        rear = 0;
-    }
-    else if(front == 0){
-        front = size-1;
-    }
-    else{
-        front = front-1;
-    }
-    arr[front] = key;
-}
+        void push_front(int value){
+            Node *newNode = new Node(value);
+            if(isEmpty()){
+                head=newNode;
+            }else{
+                newNode->next=head;
+                head->prev=newNode;
+                head = newNode;
+            }
+        }
 
-void Deque::insertrear(int key){
-    if(isFull()){
-        cout << "Overflow\n";
-        return;
-    }
+        void pop_front(){
+            if(isEmpty()){
+                cout<<"Queue is empty"<<endl;
+            }else if(size() == 1){
+                delete head;
+                head = nullptr;
+            }else{
+                Node *temp = head;
+                head=head->next;
+                head->prev=nullptr;
+                delete temp;
+            }
+        }
 
-    if(front == -1){
-        front = 0;
-        rear = 0;
-    }
-    else if(rear == size-1){
-        rear = 0;
-    }
-    else{
-        rear = rear+1;
-    }
-    arr[rear] = key;
-}
+        void push_rear(int value){
+            Node *newNode = new Node(value);
+            if(isEmpty()){
+                head = newNode;
+            }else{
+                Node *temp = head;
+                while(temp->next != nullptr){
+                    temp=temp->next;
+                }
+                temp->next= newNode;
+                newNode->prev = temp;
+            }
+        }
 
-void Deque::deletefront(){
-    if(isEmpty()){
-        cout << "Underflow\n";
-        return;
-    }
+        void pop_rear(){
+            if(isEmpty()){
+                cout<<"List is empty"<<endl;
+            }else{
+                Node *temp=head;
+                while(true){
+                    if(temp->next == nullptr){
+                        temp->prev->next=nullptr;
+                        delete temp;
+                        break;
+                    }else{
+                        temp = temp->next;
+                    }
+                }
+            }
+        }
 
-    if(front == rear){
-        front = -1;
-        rear = -1;
-    }
-    else if(front == size-1){
-        front = 0;
-    }
-    else{
-        front = front+1;
-    }
-}
-
-void Deque::deleterear(){
-    if(isEmpty()){
-        cout << "Underflow\n";
-        return;
-    }
-
-    if(front == rear){
-        front = -1;
-        rear = -1;
-    }
-    else if(rear == 0){
-        rear = size-1;
-    }
-    else{
-        rear = rear-1;
-    }
-}
-
-int Deque::getFront(){
-    if(isEmpty()){
-        cout << "Underflow\n";
-        return -1;
-    }
-    return arr[front];
-}
-
-int Deque::getRear(){
-    if(isEmpty() || rear < 0){
-        cout << "Underflow\n";
-        return -1;
-    }
-    return arr[rear];
-}
+        void display(){
+            if(!isEmpty()){
+                Node *temp=head;
+                while(temp != nullptr){
+                    cout<<temp->data<<", ";
+                    temp = temp->next;
+                }
+                cout<<endl;
+            }else{
+                cout<<"List is empty"<<endl;
+            }
+        }
+};
 
 int main(){
-    Deque dq(4);
-    cout << "Insert element at rear end \n";
-    dq.insertrear(5);
-    dq.insertrear(11);
-
-    cout<<"rear element: "<<dq.getRear()<<endl;
-    cout<<"after deletion of rear element new rear element: "<<dq.getRear()<<endl;
-    cout<<"Inserting element at front end \n";
-    dq.insertfront(8);
-    cout<<"front element: "<<dq.getFront()<<endl;
-    dq.deletefront();
-    cout<<"after deletion of front element new front element: "<<dq.getFront()<<endl;
+    DQlinkedlist dl;
+    // cout<<dl.isEmpty()<<endl;
+    dl.push_front(12);
+    dl.push_front(34);
+    dl.push_front(19);
+    dl.display();
+    // dl.pop_front();
+    // dl.display();
+    dl.push_rear(99);
+    dl.push_rear(100);
+    dl.push_rear(110);
+    dl.pop_rear();
+    dl.push_front(1);
+    dl.display();
+    // cout<<dl.size()<<endl;
     return 0;
 }
-
